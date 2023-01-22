@@ -21,8 +21,6 @@
 
 #include "gcal-context.h"
 #include "gcal-event-widget.h"
-#include "gcal-weather-service.h"
-#include "gcal-weather-info.h"
 
 #include <gtk/gtk.h>
 

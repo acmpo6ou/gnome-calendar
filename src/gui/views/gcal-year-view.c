@@ -128,8 +128,6 @@ enum {
 
 static void          gcal_view_interface_init                    (GcalViewInterface  *iface);
 
-static void          update_weather                              (GcalYearView       *self);
-
 static void          gcal_timeline_subscriber_interface_init     (GcalTimelineSubscriberInterface *iface);
 
 
@@ -174,16 +172,6 @@ event_activated (GcalEventWidget *widget,
   if (view->popover_mode)
     gtk_widget_hide (view->popover);
   g_signal_emit_by_name (view, "event-activated", widget);
-}
-
-static void
-weather_changed (GcalWeatherService *weather_service,
-                 GcalYearView       *self)
-{
-  g_return_if_fail (GCAL_IS_WEATHER_SERVICE (weather_service));
-  g_return_if_fail (GCAL_IS_YEAR_VIEW (self));
-
-  update_weather (self);
 }
 
 static void
@@ -299,7 +287,6 @@ update_no_events_page (GcalYearView *year_view)
     }
 
   gtk_label_set_text (GTK_LABEL (year_view->no_events_title), title);
-  update_weather (year_view);
 }
 
 static void
@@ -1888,12 +1875,6 @@ gcal_year_view_set_property (GObject      *object,
                                self,
                                G_CONNECT_SWAPPED);
 
-      g_signal_connect_object (gcal_context_get_weather_service (self->context),
-                               "weather-changed",
-                               G_CALLBACK (weather_changed),
-                               self,
-                               0);
-      update_weather (self);
       break;
 
     case PROP_SHOW_WEEK_NUMBERS:
@@ -2104,61 +2085,5 @@ gcal_year_view_init (GcalYearView *self)
                      NULL,
                      0,
                      GDK_ACTION_MOVE);
-}
-
-
-static void
-update_weather (GcalYearView *self)
-{
-  GcalWeatherService *weather_service;
-  gboolean updated = FALSE;
-
-  g_return_if_fail (GCAL_IS_YEAR_VIEW (self));
-
-  weather_service = gcal_context_get_weather_service (self->context);
-
-  if (self->date)
-    {
-      GPtrArray *weather_infos;
-      GDate date;
-      guint i;
-
-      g_date_set_dmy (&date,
-                      g_date_time_get_day_of_month (self->date),
-                      g_date_time_get_month (self->date),
-                      g_date_time_get_year (self->date));
-
-      weather_infos = gcal_weather_service_get_weather_infos (weather_service);
-
-      for (i = 0; weather_infos && i < weather_infos->len; i++)
-        {
-          GcalWeatherInfo *info;
-          GDate wdate;
-
-          info = g_ptr_array_index (weather_infos, i);
-
-          gcal_weather_info_get_date (info, &wdate);
-
-          if (g_date_compare (&date, &wdate) == 0)
-            {
-              const gchar *temp_str; /* unowned */
-              const gchar *icon_nm;  /* unowned */
-
-              temp_str = gcal_weather_info_get_temperature (info);
-              icon_nm = gcal_weather_info_get_icon_name (info);
-
-              gtk_label_set_text (self->temp_label, temp_str);
-              gtk_image_set_from_icon_name (self->weather_icon, icon_nm, GTK_ICON_SIZE_SMALL_TOOLBAR);
-              updated = TRUE;
-              break;
-            }
-        }
-    }
-
-  if (!updated)
-    {
-      gtk_label_set_text (self->temp_label, "");
-      gtk_image_clear (self->weather_icon);
-    }
 }
 

@@ -24,7 +24,6 @@
 #include "gcal-enums.h"
 #include "gcal-manager.h"
 #include "gcal-search-engine.h"
-#include "weather/gcal-weather-service.h"
 
 #include <glib-object.h>
 #include <goa/goa.h>
@@ -49,8 +48,6 @@ GSettings*           gcal_context_get_settings                   (GcalContext   
 GcalTimeFormat       gcal_context_get_time_format                (GcalContext        *self);
 
 GTimeZone*           gcal_context_get_timezone                   (GcalContext        *self);
-
-GcalWeatherService*  gcal_context_get_weather_service            (GcalContext        *self);
 
 void                 gcal_context_startup                        (GcalContext        *self);
 

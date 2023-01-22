@@ -118,14 +118,11 @@ gcal_application_sync (GSimpleAction *sync,
                        GVariant      *parameter,
                        gpointer       app)
 {
-  GcalWeatherService *weather_service;
   GcalApplication *self;
 
   self = GCAL_APPLICATION (app);
-  weather_service = gcal_context_get_weather_service (self->context);
 
   gcal_manager_refresh (gcal_context_get_manager (self->context));
-  gcal_weather_service_update (weather_service);
 }
 
 static void
@@ -151,7 +148,6 @@ static gchar*
 build_about_copyright (GcalApplication *self)
 {
   g_autoptr (GDateTime) dt = NULL;
-  GcalWeatherService *weather_service;
   const gchar *attribution;
   GString *builder;
 
@@ -163,13 +159,6 @@ build_about_copyright (GcalApplication *self)
                          _("Copyright \xC2\xA9 2012\xE2\x80\x93%d " "The Calendar authors"),
                           g_date_time_get_year (dt));
 
-  weather_service = gcal_context_get_weather_service (self->context);
-  attribution = gcal_weather_service_get_attribution (weather_service);
-  if (attribution)
-    {
-      g_string_append_c (builder, '\n');
-      g_string_append (builder, attribution);
-    }
   g_string_append (builder, "</span>");
 
   return g_string_free (builder, FALSE);

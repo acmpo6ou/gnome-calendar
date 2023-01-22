@@ -13,7 +13,6 @@ gcal_deps = [
   gtk_dep,
   gio_dep,
   goa_dep,
-  gweather_dep,
   geoclue_dep,
   geocode_dep,
   m_dep,
@@ -72,7 +71,6 @@ subdir('gui')
 subdir('search')
 subdir('theme')
 subdir('utils')
-subdir('weather')
 
 libgcal_generated_sources_dep = declare_dependency(
   sources: built_sources,
@@ -132,7 +130,6 @@ headers_gir = files(
   'gui/gcal-meeting-row.h',
   'gui/gcal-quick-add-popover.h',
   'gui/gcal-search-button.h',
-  'gui/gcal-weather-settings.h',
   'gui/gcal-window.h',
   'gui/importer/gcal-import-dialog.h',
   'gui/importer/gcal-import-file-row.h',
@@ -152,8 +149,6 @@ headers_gir = files(
   'utils/gcal-date-time-utils.h',
   'utils/gcal-source-discoverer.h',
   'utils/gcal-utils.h',
-  'weather/gcal-weather-info.h',
-  'weather/gcal-weather-service.h',
 )
 
 gnome = import('gnome')
@@ -164,7 +159,7 @@ gnome.generate_gir(libgcal,
   identifier_prefix: 'Gcal',
   dependencies: gcal_deps,
   symbol_prefix: 'gcal',
-  includes: ['Handy-1', 'Soup-2.4', 'ICal-3.0', 'Dazzle-1.0', 'ECal-2.0', 'EDataServer-1.2', 'EDataServerUI-1.2', 'GLib-2.0', 'Gtk-3.0', 'Gio-2.0', 'Goa-1.0', 'GWeather-3.0', 'Geoclue-2.0', 'GeocodeGlib-1.0'],
+  includes: ['Handy-1', 'Soup-2.4', 'ICal-3.0', 'Dazzle-1.0', 'ECal-2.0', 'EDataServer-1.2', 'EDataServerUI-1.2', 'GLib-2.0', 'Gtk-3.0', 'Gio-2.0', 'Goa-1.0', 'Geoclue-2.0', 'GeocodeGlib-1.0'],
 )
 
 libgcal_dep = declare_dependency(

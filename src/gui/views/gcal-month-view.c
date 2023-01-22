@@ -893,69 +893,6 @@ setup_month_grid (GcalMonthView *self,
     }
 }
 
-static GcalWeatherInfo*
-get_weather_info_for_cell (GcalMonthView *self,
-                           guint          cell)
-{
-  GcalWeatherService *weather_service;
-  GcalMonthCell *first_cell;
-  GPtrArray *weather_infos;
-  GDateTime *first_dt;
-  GDate first;
-  guint i;
-
-  if (!self->date)
-    return NULL;
-
-  weather_service = gcal_context_get_weather_service (self->context);
-  weather_infos = gcal_weather_service_get_weather_infos (weather_service);
-
-  first_cell = GCAL_MONTH_CELL (self->month_cell[0][0]);
-  first_dt = gcal_month_cell_get_date (first_cell);
-
-  g_date_set_dmy (&first,
-                  g_date_time_get_day_of_month (first_dt),
-                  g_date_time_get_month (first_dt),
-                  g_date_time_get_year (first_dt));
-
-
-  for (i = 0; weather_infos && i < weather_infos->len; i++)
-    {
-      GcalWeatherInfo *info;
-      GDate weather_date;
-      gint day_difference;
-
-      info = g_ptr_array_index (weather_infos, i);
-
-      gcal_weather_info_get_date (info, &weather_date);
-      day_difference = g_date_days_between (&first, &weather_date);
-
-      if (day_difference == cell)
-        return info;
-    }
-
-  return NULL;
-}
-
-static void
-update_weather (GcalMonthView *self,
-                gboolean       clear_old)
-{
-  guint row;
-  guint col;
-
-  g_return_if_fail (GCAL_IS_MONTH_VIEW (self));
-
-  for (row = 0; row < 6; row++)
-    {
-      for (col = 0; col < 7; col++)
-        {
-          GcalMonthCell *cell = GCAL_MONTH_CELL (self->month_cell[row][col]);
-          gcal_month_cell_set_weather (cell,  get_weather_info_for_cell (self, row * 7 + col));
-        }
-    }
-}
-
 static gboolean
 update_month_cells (GcalMonthView *self)
 {
@@ -1037,8 +974,6 @@ update_month_cells (GcalMonthView *self)
           gcal_month_cell_set_selected (cell, selected);
         }
     }
-
-  update_weather (self, FALSE);
 
   self->update_grid_id = 0;
 
@@ -1146,14 +1081,6 @@ on_month_popover_event_activated_cb (GcalMonthPopover *month_popover,
 {
   activate_event (self, event_widget);
 }
-
-static void
-on_weather_service_weather_changed_cb (GcalWeatherService *weather_service,
-                                       GcalMonthView      *self)
-{
-  update_weather (self, TRUE);
-}
-
 
 /*
  * GcalView interface
@@ -2155,12 +2082,6 @@ gcal_month_view_set_property (GObject       *object,
                                self,
                                G_CONNECT_SWAPPED);
 
-      g_signal_connect_object (gcal_context_get_weather_service (self->context),
-                               "weather-changed",
-                               G_CALLBACK (on_weather_service_weather_changed_cb),
-                               self,
-                               0);
-      update_weather (self, TRUE);
       g_object_notify (object, "context");
       break;
 

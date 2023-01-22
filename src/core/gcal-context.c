@@ -36,7 +36,6 @@ struct _GcalContext
   GcalSearchEngine   *search_engine;
   GSettings          *settings;
   GcalTimeFormat      time_format;
-  GcalWeatherService *weather_service;
 
   GcalNightLightMonitor *night_light_monitor;
   GcalTimeZoneMonitor   *timezone_monitor;
@@ -54,7 +53,6 @@ enum
   PROP_SETTINGS,
   PROP_TIME_FORMAT,
   PROP_TIMEZONE,
-  PROP_WEATHER_SERVICE,
   N_PROPS
 };
 
@@ -118,15 +116,12 @@ gcal_context_finalize (GObject *object)
 {
   GcalContext *self = (GcalContext *)object;
 
-  gcal_weather_service_stop (self->weather_service);
-
   g_clear_object (&self->clock);
   g_clear_object (&self->desktop_settings);
   g_clear_object (&self->goa_client);
   g_clear_object (&self->manager);
   g_clear_object (&self->night_light_monitor);
   g_clear_object (&self->timezone_monitor);
-  g_clear_object (&self->weather_service);
 
   G_OBJECT_CLASS (gcal_context_parent_class)->finalize (object);
 }
@@ -169,10 +164,6 @@ gcal_context_get_property (GObject    *object,
       g_value_set_boxed (value, gcal_time_zone_monitor_get_timezone (self->timezone_monitor));
       break;
 
-    case PROP_WEATHER_SERVICE:
-      g_value_set_object (value, self->weather_service);
-      break;
-
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
     }
@@ -193,7 +184,6 @@ gcal_context_set_property (GObject      *object,
     case PROP_SETTINGS:
     case PROP_TIME_FORMAT:
     case PROP_TIMEZONE:
-    case PROP_WEATHER_SERVICE:
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
     }
@@ -252,12 +242,6 @@ gcal_context_class_init (GcalContextClass *klass)
                                                   G_TYPE_TIME_ZONE,
                                                   G_PARAM_READABLE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
-  properties[PROP_WEATHER_SERVICE] = g_param_spec_object ("weather-service",
-                                                          "Weather service",
-                                                          "Weather service",
-                                                          GCAL_TYPE_WEATHER_SERVICE,
-                                                          G_PARAM_READABLE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
-
   g_object_class_install_properties (object_class, N_PROPS, properties);
 }
 
@@ -267,7 +251,6 @@ gcal_context_init (GcalContext *self)
   self->clock = gcal_clock_new ();
   self->goa_client = goa_client_new_sync (NULL, NULL);
   self->settings = g_settings_new ("org.gnome.calendar");
-  self->weather_service = gcal_weather_service_new ();
 
   self->timezone_monitor = gcal_time_zone_monitor_new ();
   g_signal_connect_object (self->timezone_monitor,
@@ -403,21 +386,6 @@ gcal_context_get_timezone (GcalContext *self)
   g_return_val_if_fail (GCAL_IS_CONTEXT (self), NULL);
 
   return gcal_time_zone_monitor_get_timezone (self->timezone_monitor);
-}
-
-/**
- * gcal_context_get_weather_service:
- *
- * Retrieves the #GcalWeatherService from @self.
- *
- * Returns: (transfer none): a #GcalWeatherService
- */
-GcalWeatherService*
-gcal_context_get_weather_service (GcalContext *self)
-{
-  g_return_val_if_fail (GCAL_IS_CONTEXT (self), NULL);
-
-  return self->weather_service;
 }
 
 void

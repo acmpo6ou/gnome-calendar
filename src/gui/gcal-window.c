@@ -34,7 +34,6 @@
 #include "gcal-timeline.h"
 #include "gcal-timeline-subscriber.h"
 #include "gcal-view.h"
-#include "gcal-weather-settings.h"
 #include "gcal-week-view.h"
 #include "gcal-window.h"
 #include "gcal-year-view.h"
@@ -150,9 +149,6 @@ struct _GcalWindow
   GtkWidget          *calendar_management_dialog;
 
   gint                open_edit_dialog_timeout_id;
-
-  /* weather management */
-  GcalWeatherSettings *weather_settings;
 
   /* temp to keep event_creation */
   gboolean            open_edit_dialog;
@@ -923,7 +919,6 @@ gcal_window_constructed (GObject *object)
    * these properties using the GtkBuilder .ui file.
    */
   g_object_bind_property (self, "context", self->calendar_popover, "context", G_BINDING_DEFAULT | G_BINDING_SYNC_CREATE);
-  g_object_bind_property (self, "context", self->weather_settings, "context", G_BINDING_DEFAULT | G_BINDING_SYNC_CREATE);
   g_object_bind_property (self, "context", self->calendar_management_dialog, "context", G_BINDING_DEFAULT | G_BINDING_SYNC_CREATE);
   g_object_bind_property (self, "context", self->week_view, "context", G_BINDING_DEFAULT | G_BINDING_SYNC_CREATE);
   g_object_bind_property (self, "context", self->month_view, "context", G_BINDING_DEFAULT | G_BINDING_SYNC_CREATE);
@@ -1072,7 +1067,6 @@ gcal_window_class_init (GcalWindowClass *klass)
   g_type_ensure (GCAL_TYPE_MONTH_VIEW);
   g_type_ensure (GCAL_TYPE_QUICK_ADD_POPOVER);
   g_type_ensure (GCAL_TYPE_SEARCH_BUTTON);
-  g_type_ensure (GCAL_TYPE_WEATHER_SETTINGS);
   g_type_ensure (GCAL_TYPE_WEEK_VIEW);
   g_type_ensure (GCAL_TYPE_YEAR_VIEW);
 
@@ -1133,7 +1127,6 @@ gcal_window_class_init (GcalWindowClass *klass)
   gtk_widget_class_bind_template_child (widget_class, GcalWindow, views_overlay);
   gtk_widget_class_bind_template_child (widget_class, GcalWindow, views_stack);
   gtk_widget_class_bind_template_child (widget_class, GcalWindow, views_switcher);
-  gtk_widget_class_bind_template_child (widget_class, GcalWindow, weather_settings);
   gtk_widget_class_bind_template_child (widget_class, GcalWindow, week_view);
   gtk_widget_class_bind_template_child (widget_class, GcalWindow, year_view);
 

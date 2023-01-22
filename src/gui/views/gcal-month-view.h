@@ -20,7 +20,6 @@
 #define __GCAL_MONTH_VIEW_H__
 
 #include "gcal-manager.h"
-#include "gcal-weather-service.h"
 
 G_BEGIN_DECLS
 

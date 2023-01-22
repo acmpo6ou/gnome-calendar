@@ -24,7 +24,6 @@
 
 #include <gtk/gtk.h>
 #include <libecal/libecal.h>
-#include <libgweather/gweather.h>
 
 #define ALIGNED(x)      (round (x) + 0.5)
 #define MINUTES_PER_DAY 1440
@@ -38,10 +37,6 @@ G_DEFINE_AUTOPTR_CLEANUP_FUNC (ESource, g_object_unref)
 #endif
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (ECalComponent, g_object_unref)
-
-#if !GWEATHER_CHECK_VERSION(3, 39, 0)
-G_DEFINE_AUTOPTR_CLEANUP_FUNC (GWeatherLocation, gweather_location_unref)
-#endif
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (ICalTime, g_object_unref)
 

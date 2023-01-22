@@ -22,6 +22,5 @@ sources += files(
   'gcal-meeting-row.c',
   'gcal-quick-add-popover.c',
   'gcal-search-button.c',
-  'gcal-weather-settings.c',
   'gcal-window.c',
 )

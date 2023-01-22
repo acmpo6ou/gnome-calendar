@@ -51,8 +51,6 @@ struct _GcalMonthCell
   gboolean            pressed : 1;
 
   GcalContext        *context;
-
-  GcalWeatherInfo    *weather_info;
 };
 
 G_DEFINE_TYPE (GcalMonthCell, gcal_month_cell, GTK_TYPE_EVENT_BOX)
@@ -496,46 +494,6 @@ gcal_month_cell_set_date (GcalMonthCell *self,
 
   gtk_label_set_text (self->day_label, text);
   update_style_flags (self);
-}
-
-/**
- * gcal_month_cell_set_weather:
- * @self: The #GcalMonthCell instance.
- * @info: (nullable): The weather information to display.
- *
- * Sets the weather information to display for this day.
- *
- * Note that this function does not check dates nor
- * manages weather information changes on its own.
- */
-void
-gcal_month_cell_set_weather (GcalMonthCell   *self,
-                             GcalWeatherInfo *info)
-{
-  g_return_if_fail (GCAL_IS_MONTH_CELL (self));
-  g_return_if_fail (!info || GCAL_IS_WEATHER_INFO (info));
-
-  if (self->weather_info == info)
-    return;
-
-  self->weather_info = info;
-
-  if (!info)
-    {
-      gtk_image_clear (self->weather_icon);
-      gtk_label_set_text (self->temp_label, "");
-    }
-  else
-    {
-      const gchar* icon_name; /* unowned */
-      const gchar* temp_str;  /* unwoned */
-
-      icon_name = gcal_weather_info_get_icon_name (info);
-      temp_str = gcal_weather_info_get_temperature (info);
-
-      gtk_image_set_from_icon_name (self->weather_icon, icon_name, GTK_ICON_SIZE_SMALL_TOOLBAR);
-      gtk_label_set_text (self->temp_label, temp_str);
-    }
 }
 
 gboolean
