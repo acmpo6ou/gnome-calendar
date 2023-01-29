@@ -83,16 +83,6 @@
           </object>
         </child>
 
-        <!-- New Event button -->
-        <child>
-          <object class="GtkButton" id="new_event_button">
-            <property name="visible">true</property>
-            <property name="relief">none</property>
-            <property name="label" translatable="yes">New Event…</property>
-            <signal name="clicked" handler="new_event_button_clicked_cb" object="GcalMonthPopover" swapped="no" />
-          </object>
-        </child>
-
       </object>
     </child>
   </template>
